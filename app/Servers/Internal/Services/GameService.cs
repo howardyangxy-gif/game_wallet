@@ -21,20 +21,30 @@ public class GameService
     // 玩家下注並結算
     public (bool success, decimal balance, string errorMsg) PlayerBetAndSettle(BetRequest betRequest)
     {
-        // 分成單一錢包跟轉帳錢包
-        // 單一錢包 , 會通知代理商進行扣款
-        // 轉帳錢包, 直接在錢包端扣款
-        if (betRequest.WalletType == WalletType.Single)
-        {
-            // 單一錢包, 會通知代理商進行扣款(下一階段再補)
-            return (false, 0, "單一錢包不支持此操作");
+        try
+        { 
+            // log 
+            // 分成單一錢包跟轉帳錢包
+            // 單一錢包 , 會通知代理商進行扣款
+            // 轉帳錢包, 直接在錢包端扣款
+            if (betRequest.WalletType == WalletType.Single)
+            {
+                // 單一錢包, 會通知代理商進行扣款(下一階段再補)
+                return (false, 0, "單一錢包不支持此操作");
+            }
+            else
+            {
+                // 轉帳錢包, 直接在錢包端扣款(下一階段再補)
+                return (false, 0, "轉帳錢包不支持此操作");
+            }
+
+        
         }
-        else
+        catch (Exception ex)
         {
-            // 轉帳錢包, 直接在錢包端扣款(下一階段再補)
-            return (false, 0, "轉帳錢包不支持此操作");
+            Console.WriteLine($"[GameService] Error in PlayerBetAndSettle: {ex.Message}");
+            return (false, 0, "Internal server error");
         }
 
-        return (true, 100.0m, string.Empty);
     }
 }
