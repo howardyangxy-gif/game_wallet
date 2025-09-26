@@ -14,9 +14,9 @@ public class GameService
     }
 
     // 驗證遊戲端傳來的 userToken
-    public (bool isValid, int userId, string errorMsg) VerifyUserToken(VerifyRequest verifyRequest)
-    {
-    }
+    // public (bool isValid, int userId, string errorMsg) VerifyUserToken(VerifyRequest verifyRequest)
+    // {
+    // }
 
     // 玩家下注並結算
     public (bool success, decimal balance, string errorMsg) PlayerBetAndSettle(BetRequest betRequest)

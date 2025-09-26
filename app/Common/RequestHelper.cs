@@ -13,8 +13,8 @@ public static class RequestHelper
         // if (!request.IsHttps)
         //     return (false, Results.BadRequest("HTTPS required"), default);
 
-        string agentId = request.Headers.TryGetValue("X-Agent-Id", out var agentIdVals) ? agentIdVals.ToString() : "";
-        if (string.IsNullOrEmpty(agentId))
+        int agentId = request.Headers.TryGetValue("X-Agent-Id", out var agentIdVals) ? int.Parse(agentIdVals.ToString()) : 0;
+        if (agentId == 0)
             return (false, Results.BadRequest("Missing agentId"), default);
 
         // 從db取得agent

@@ -8,7 +8,7 @@ namespace app.Common
 
     public class AgentRequestBase
     {
-        public string agentId { get; set; } = string.Empty;
+        public int agentId { get; set; } = 0;
         public WalletType walletType { get; set; } = WalletType.Single;
     }
 }

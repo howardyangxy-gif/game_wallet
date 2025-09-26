@@ -151,3 +151,4 @@ C:\Users\jucky\Documents\project\xyy\game-center-1\bin\Debug\net8.0\runtimes\win
 C:\Users\jucky\Documents\project\xyy\game-center-1\bin\Debug\net8.0\runtimes\win-x64\native\krb5_64.dll
 C:\Users\jucky\Documents\project\xyy\game-center-1\bin\Debug\net8.0\runtimes\win-x64\native\krbcc64.dll
 C:\Users\jucky\Documents\project\xyy\game-center-1\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
+C:\Users\jucky\Documents\project\xyy\game-center-1\obj\Debug\net8.0\game-center-1.sourcelink.json

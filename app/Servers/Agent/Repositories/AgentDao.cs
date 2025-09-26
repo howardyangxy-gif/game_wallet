@@ -15,13 +15,10 @@ public class AgentDao
         public string? whiteIp { get; set; } // 新增 whiteIp 屬性
     }
 
-    public AgentInfoDto? GetAgentInfo(string agentId)
+    public AgentInfoDto? GetAgentInfo(int agentId)
     {
-        if (!int.TryParse(agentId, out var id))
-            return null;
-
         string sql = "SELECT id, aesKey, hmacKey, walletType, whiteIp, status FROM agents WHERE id = @id";
-        return MySqlHelper.QueryFirstOrDefault<AgentInfoDto>(sql, new { id });
+        return MySqlHelper.QueryFirstOrDefault<AgentInfoDto>(sql, new { id = agentId });
     }
 
     public bool UpdateAgentStatus(int agentId, int status)
@@ -142,6 +139,46 @@ public class AgentDao
         {
             Console.WriteLine($"[GetPlayerBalance] Exception: {ex.Message}\n{ex.StackTrace}");
             return (1, 0, 0L);
+        }
+    }
+
+    public (int affectedRows, string err) UpdateAccount(int agentId, string playerName)
+    {
+        using var conn = new MySql.Data.MySqlClient.MySqlConnection(MySqlHelper.GetConnStr());
+        conn.Open();
+        using var tran = conn.BeginTransaction();
+        try
+        {
+            int affectedRows = conn.Execute("UPDATE players SET lastLoginTime = NOW() WHERE agentId = @agentId AND name = @playerName", new { agentId, playerName }, tran);
+            tran.Commit();
+            return (affectedRows, string.Empty);
+        }
+        catch (Exception ex)
+        {
+            tran.Rollback();
+            Console.WriteLine($"[UpdateAccount] Exception: {ex.Message}\n{ex.StackTrace}");
+            return (-1, ex.Message);
+        }
+    }
+    
+    public void CreatePlayer(int agentId, string playerName)
+    {
+        using var conn = new MySql.Data.MySqlClient.MySqlConnection(MySqlHelper.GetConnStr());
+        conn.Open();
+        using var tran = conn.BeginTransaction();
+        try
+        {
+            conn.Execute("INSERT INTO players (agentId, name, createTime, lastLoginTime) VALUES (@agentId, @playerName, NOW(), NOW())", new { agentId, playerName }, tran);
+            // 同時在 player_wallets 建立對應的錢包紀錄，初始餘額為 0
+            conn.Execute(@"INSERT INTO player_wallets (name, currency, money)
+                            VALUES (@playerName,
+                        (SELECT currency FROM currencies WHERE id = (SELECT moneyType FROM agents WHERE id = @agentId)),0)", new { agentId, playerName }, tran);
+            tran.Commit();
+        }
+        catch (Exception ex)
+        {
+            tran.Rollback();
+            Console.WriteLine($"[CreatePlayer] Exception: {ex.Message}\n{ex.StackTrace}");
         }
     }
 }
